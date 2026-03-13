@@ -934,7 +934,7 @@ input, textarea, select, button { font-family: var(--ff); -webkit-appearance: no
         <div class="ds-section">
           <div class="ds-sec-label">Discover</div>
           <button class="ds-btn on" id="dsb-feed" onclick="showPanel('feed')"><span class="ds-ico">🏠</span><span>Home</span></button>
-          <button class="ds-btn" id="dsb-explore" onclick="showPanel('explore')"><span class="ds-ico">🔭</span><span>Explore</span></button>
+          <button class="ds-btn" id="dsb-explore" onclick="showPanel('explore')"><span class="ds-ico">🔍</span><span>Search</span></button>
           <button class="ds-btn" id="dsb-reels" onclick="showPanel('reels')"><span class="ds-ico">🎬</span><span>Reels</span></button>
         </div>
         <div class="ds-section">
@@ -971,9 +971,9 @@ input, textarea, select, button { font-family: var(--ff); -webkit-appearance: no
           <div class="tb-title" id="tbTitle" style="display:none">Home</div>
         </div>
         <div class="tb-right" id="tbRight">
-          <button class="ic-btn" onclick="openUploadModal()">📸</button>
-          <button class="ic-btn" onclick="showStoryViewer()">✦</button>
-          <button class="ic-btn" onclick="showPanel('messages')">💬</button>
+          <button class="ic-btn" onclick="showPanel('explore')" title="Search" style="font-size:18px">🔍</button>
+          <button class="ic-btn" onclick="openUploadModal()" title="Upload">📸</button>
+          <button class="ic-btn" onclick="showPanel('messages')" title="Messages">💬</button>
         </div>
       </div>
 
@@ -1154,7 +1154,7 @@ input, textarea, select, button { font-family: var(--ff); -webkit-appearance: no
   <nav class="bottom-nav" id="bottomNav">
     <div class="bn-inner">
       <button class="bn-btn on" id="bn-feed" onclick="showPanel('feed')"><span class="bn-ico">🏠</span><span class="bn-lbl">Home</span></button>
-      <button class="bn-btn" id="bn-explore" onclick="showPanel('explore')"><span class="bn-ico">🔭</span><span class="bn-lbl">Explore</span></button>
+      <button class="bn-btn" id="bn-explore" onclick="showPanel('explore')"><span class="bn-ico">🔍</span><span class="bn-lbl">Search</span></button>
       <button class="bn-btn" id="bn-reels" onclick="showPanel('reels')"><span class="bn-ico">🎬</span><span class="bn-lbl">Reels</span></button>
       <button class="bn-btn" id="bn-gallery" onclick="showPanel('gallery')"><span class="bn-ico">🖼</span><span class="bn-lbl">Gallery</span></button>
       <button class="bn-btn" id="bn-profile" onclick="showPanel('profile')"><span class="bn-ico">👤</span><span class="bn-lbl">Me</span></button>
@@ -1878,13 +1878,14 @@ function renderExplore() {
   const sr = document.getElementById('searchResults');
   const ds = document.getElementById('discoverSection');
   if (!sr || !ds) return;
+  // Reset to People tab on fresh panel open
+  currentSearchTab = 'people';
+  document.querySelectorAll('.s-tab').forEach(b => b.classList.remove('on'));
+  document.getElementById('st-people')?.classList.add('on');
   sr.style.display = 'none';
   ds.style.display = '';
   const si = document.getElementById('searchInput');
   if (si) si.value = '';
-  currentSearchTab = 'people';
-  document.querySelectorAll('.s-tab').forEach(b => b.classList.remove('on'));
-  document.getElementById('st-people')?.classList.add('on');
   renderDiscover();
   renderTrendingTags();
 }
@@ -1913,8 +1914,67 @@ function switchSearchTab(tab, el) {
   currentSearchTab = tab;
   document.querySelectorAll('.s-tab').forEach(b => b.classList.remove('on'));
   el.classList.add('on');
-  const q = document.getElementById('searchInput')?.value || '';
-  if (q) handleSearch(q); else renderExplore();
+  const q = (document.getElementById('searchInput')?.value || '').trim();
+  if (q) {
+    handleSearch(q);
+  } else {
+    // Show tab-specific empty/discover state without resetting the tab
+    showTabEmptyState(tab);
+  }
+}
+
+function showTabEmptyState(tab) {
+  const sr = document.getElementById('searchResults');
+  const ds = document.getElementById('discoverSection');
+  if (!sr || !ds) return;
+  if (tab === 'people') {
+    sr.style.display = 'none';
+    ds.style.display = '';
+    renderDiscover();
+    renderTrendingTags();
+  } else if (tab === 'posts') {
+    ds.style.display = 'none';
+    sr.style.display = '';
+    const posts = DB.posts();
+    if (!posts.length) {
+      sr.innerHTML = `<div class="search-empty"><div class="search-empty-ico">📝</div><div class="search-empty-title">No posts yet</div><div class="search-empty-sub">Start posting to see them here</div></div>`;
+    } else {
+      sr.innerHTML = `<div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--w3);margin-bottom:13px;display:flex;align-items:center;gap:7px"><span style="width:12px;height:2px;background:var(--blue);border-radius:1px;display:inline-block"></span>ALL POSTS</div>` +
+        posts.map(p => postCardHTML(p, '')).join('');
+    }
+  } else if (tab === 'tags') {
+    ds.style.display = 'none';
+    sr.style.display = '';
+    renderTrendingTagsFull();
+  }
+}
+
+function renderTrendingTagsFull() {
+  const sr = document.getElementById('searchResults');
+  if (!sr) return;
+  const tags = ['#PreethieVibes','#GoldenHour','#AfroCreatives','#StreetPhotography','#NewMusic','#LagosLife','#AfroBeats','#FoodiesOfPreethie','#Fitness','#TravelWithPreethie'];
+  sr.innerHTML = `<div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--w3);margin-bottom:13px;display:flex;align-items:center;gap:7px"><span style="width:12px;height:2px;background:var(--blue);border-radius:1px;display:inline-block"></span>TRENDING TAGS</div>
+    ${tags.map((t,i) => `<div onclick="document.getElementById('searchInput').value='${t}';handleSearch('${t}')" style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--bd);cursor:pointer;transition:background .14s;border-radius:8px" onmouseover="this.style.background='var(--w5)'" onmouseout="this.style.background=''">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:14px;color:var(--w3);font-weight:700;width:18px;text-align:center">${i+1}</span>
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--blue3)">${t}</div>
+          <div style="font-size:11px;color:var(--w3);margin-top:2px">${Math.floor(Math.random()*9+1)}.${Math.floor(Math.random()*9)}K posts</div>
+        </div>
+      </div>
+      <span style="color:var(--w3);font-size:16px">→</span>
+    </div>`).join('')}`;
+}
+
+function postCardHTML(p, q) {
+  return `<div style="background:var(--bg2);border:1px solid var(--bd);border-radius:14px;padding:13px;margin-bottom:10px;cursor:pointer" onclick="showPanel('feed')">
+    <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px">
+      <div style="width:34px;height:34px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;overflow:hidden">${p.avatar?`<img src="${p.avatar}" style="width:100%;height:100%;object-fit:cover">`:(p.emoji||'✨')}</div>
+      <div><div style="font-size:13px;font-weight:700">${p.name||p.uid}</div><div style="font-size:11px;color:var(--w3)">@${p.uid} · ${ago(p.time)}</div></div>
+    </div>
+    <div style="font-size:13px;color:var(--w2);line-height:1.6">${q ? highlightMatch(p.text,q) : p.text}</div>
+    ${p.photoUrl?`<div style="margin-top:8px;border-radius:10px;overflow:hidden;max-height:160px"><img src="${p.photoUrl}" style="width:100%;object-fit:cover"></div>`:''}
+  </div>`;
 }
 
 function handleSearch(q) {
@@ -1949,13 +2009,7 @@ function handleSearch(q) {
       sr.innerHTML = `<div class="search-empty"><div class="search-empty-ico">📝</div><div class="search-empty-title">No posts found</div><div class="search-empty-sub">Try different keywords</div></div>`;
     } else {
       sr.innerHTML = `<div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--w3);margin-bottom:13px;display:flex;align-items:center;gap:7px"><span style="width:12px;height:2px;background:var(--blue);border-radius:1px;display:inline-block"></span>${posts.length} POST${posts.length!==1?'S':''}</div>` +
-        posts.map(p => `<div style="background:var(--bg2);border:1px solid var(--bd);border-radius:14px;padding:13px;margin-bottom:10px;cursor:pointer" onclick="showPanel('feed')">
-          <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px">
-            <div style="width:34px;height:34px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;overflow:hidden">${p.avatar?`<img src="${p.avatar}" style="width:100%;height:100%;object-fit:cover">`:(p.emoji||'✨')}</div>
-            <div><div style="font-size:13px;font-weight:700">${p.name||p.uid}</div><div style="font-size:11px;color:var(--w3)">@${p.uid} · ${ago(p.time)}</div></div>
-          </div>
-          <div style="font-size:13px;color:var(--w2);line-height:1.6">${highlightMatch(p.text, q)}</div>
-        </div>`).join('');
+        posts.map(p => postCardHTML(p, q)).join('');
     }
   } else {
     // tags
