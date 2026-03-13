@@ -625,12 +625,128 @@ input, textarea, select, button { font-family: var(--ff); -webkit-appearance: no
   .story-viewer .sv-progress { padding-top: max(12px, env(safe-area-inset-top)); }
   .auth-panel { padding-bottom: max(32px, env(safe-area-inset-bottom)); }
 }
+
+/* ════════════════════════════════════════
+   CALL SCREENS
+════════════════════════════════════════ */
+.call-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  display: none; flex-direction: column;
+  background: #000;
+}
+.call-overlay.on { display: flex; animation: fadeIn 0.22s ease both; }
+
+/* ── VOICE CALL ── */
+.voice-call {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: space-between;
+  padding: max(48px, env(safe-area-inset-top)) 24px max(48px, env(safe-area-inset-bottom));
+  background: linear-gradient(160deg, #060b1e 0%, #0c1430 50%, #080e22 100%);
+  position: relative; overflow: hidden;
+}
+.vc-orb1 { position:absolute; width:400px; height:400px; border-radius:50%; background:radial-gradient(circle, rgba(29,110,245,0.15), transparent 70%); top:-100px; left:50%; transform:translateX(-50%); animation: pulse 4s ease-in-out infinite; }
+.vc-orb2 { position:absolute; width:300px; height:300px; border-radius:50%; background:radial-gradient(circle, rgba(124,58,237,0.1), transparent 70%); bottom:80px; left:50%; transform:translateX(-50%); animation: pulse 6s ease-in-out infinite 1s; }
+
+.vc-top { display:flex; flex-direction:column; align-items:center; gap:18px; z-index:1; margin-top: 20px; }
+.vc-avatar { width: 110px; height: 110px; border-radius: 50%; position: relative; }
+.vc-av-ring { position:absolute; inset:-4px; border-radius:50%; background:conic-gradient(var(--blue), var(--blue2), var(--blue3), var(--blue)); animation: storyRing 2.5s linear infinite; opacity: 0.8; }
+.vc-av-inner { position:absolute; inset:0; border-radius:50%; background:var(--bg3); border:3px solid var(--bg); display:flex; align-items:center; justify-content:center; font-size:44px; overflow:hidden; }
+.vc-av-inner img { width:100%; height:100%; object-fit:cover; }
+.vc-name { font-family:var(--ffd); font-size:26px; font-weight:700; color:#fff; text-align:center; }
+.vc-status { font-size:14px; color:rgba(255,255,255,0.55); letter-spacing:0.5px; }
+.vc-timer { font-family:var(--ffd); font-size:20px; color:var(--blue3); letter-spacing:2px; display:none; }
+.vc-timer.on { display:block; }
+
+/* Ringing waves */
+.vc-waves { position:relative; width:120px; height:120px; }
+.vc-wave { position:absolute; inset:-20px; border-radius:50%; border:2px solid rgba(29,110,245,0.3); animation: vcWave 2s ease-out infinite; }
+.vc-wave:nth-child(2) { animation-delay:0.5s; }
+.vc-wave:nth-child(3) { animation-delay:1s; }
+@keyframes vcWave { 0% { transform:scale(1); opacity:0.6; } 100% { transform:scale(1.8); opacity:0; } }
+
+.vc-actions { display:flex; gap:20px; align-items:center; z-index:1; }
+.call-btn { width:60px; height:60px; border-radius:50%; border:none; display:flex; align-items:center; justify-content:center; font-size:24px; cursor:pointer; transition:all 0.18s; flex-shrink:0; }
+.call-btn:hover { transform:scale(1.08); }
+.call-btn:active { transform:scale(0.95); }
+.call-btn.mute { background:rgba(255,255,255,0.12); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.15); color:#fff; }
+.call-btn.mute.on { background:rgba(239,68,68,0.2); border-color:rgba(239,68,68,0.4); }
+.call-btn.speaker { background:rgba(255,255,255,0.12); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.15); color:#fff; }
+.call-btn.speaker.on { background:rgba(29,110,245,0.2); border-color:var(--bdb); }
+.call-btn.hangup { width:68px; height:68px; background:linear-gradient(135deg,#ef4444,#dc2626); font-size:26px; box-shadow:0 8px 28px rgba(239,68,68,0.45); }
+.call-btn.answer { background:linear-gradient(135deg,#22c55e,#16a34a); font-size:26px; box-shadow:0 8px 28px rgba(34,197,94,0.45); width:68px; height:68px; }
+.call-btn.video-switch { background:rgba(255,255,255,0.12); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.15); color:#fff; }
+
+/* ── VIDEO CALL ── */
+.video-call {
+  flex:1; position:relative; background:#000;
+}
+.video-remote {
+  position:absolute; inset:0;
+  background:linear-gradient(135deg,#060b1e,#0c1430,#080e22);
+  display:flex; align-items:center; justify-content:center;
+  font-size:80px;
+}
+.video-remote video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:none; }
+.video-remote video.on { display:block; }
+.video-local {
+  position:absolute; top:max(16px,env(safe-area-inset-top)); right:16px;
+  width:100px; height:150px; border-radius:16px;
+  background:var(--bg4); border:2px solid rgba(255,255,255,0.2);
+  overflow:hidden; display:flex; align-items:center; justify-content:center;
+  font-size:32px; cursor:pointer;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  transition: all 0.2s;
+}
+.video-local video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scaleX(-1); display:none; }
+.video-local video.on { display:block; }
+.video-local:active { transform: scale(0.96); }
+
+/* Video top bar */
+.video-topbar {
+  position:absolute; top:0; left:0; right:0; z-index:10;
+  padding:max(16px,env(safe-area-inset-top)) 16px 14px;
+  background:linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
+  display:flex; align-items:flex-end; gap:12px;
+}
+.video-caller-info { flex:1; }
+.video-caller-name { font-family:var(--ffd); font-size:18px; color:#fff; font-weight:700; }
+.video-caller-status { font-size:12px; color:rgba(255,255,255,0.6); margin-top:2px; }
+
+/* Video bottom controls */
+.video-controls {
+  position:absolute; bottom:0; left:0; right:0; z-index:10;
+  padding:20px 24px max(28px,env(safe-area-inset-bottom));
+  background:linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  display:flex; align-items:center; justify-content:center; gap:16px;
+}
+
+/* Incoming call */
+.incoming-call {
+  position:fixed; bottom:max(90px,calc(env(safe-area-inset-bottom)+90px)); left:16px; right:16px;
+  background:rgba(12,15,26,0.97); border:1px solid rgba(29,110,245,0.4);
+  border-radius:20px; padding:16px 18px; z-index:600;
+  backdrop-filter:blur(20px); display:none;
+  box-shadow:0 20px 60px rgba(0,0,0,0.7);
+  animation: slideUp 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+.incoming-call.on { display:flex; align-items:center; gap:14px; }
+.ic-av { width:46px; height:46px; border-radius:50%; background:var(--bg3); display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; position:relative; }
+.ic-av::after { content:''; position:absolute; inset:-3px; border-radius:50%; border:2px solid var(--blue3); animation:vcWave 1.5s ease-out infinite; }
+.ic-info { flex:1; }
+.ic-name { font-size:15px; font-weight:700; color:#fff; }
+.ic-type { font-size:11px; color:var(--blue3); margin-top:2px; font-weight:600; }
+.ic-btns { display:flex; gap:10px; }
+.ic-decline { width:42px; height:42px; border-radius:50%; background:rgba(239,68,68,0.15); border:1.5px solid rgba(239,68,68,0.3); color:#f87171; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; }
+.ic-decline:hover { background:rgba(239,68,68,0.25); }
+.ic-answer-btn { width:42px; height:42px; border-radius:50%; background:rgba(34,197,94,0.15); border:1.5px solid rgba(34,197,94,0.3); color:#4ade80; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; }
+.ic-answer-btn:hover { background:rgba(34,197,94,0.25); }
+
 </style>
 </head>
 <body>
 
 <!-- ══════════ SPLASH ══════════ -->
-<div id="s-splash" class="screen active">
+<div id="s-splash" class="screen">
   <div class="splash-inner">
     <div class="splash-logo">Preethie</div>
     <div class="splash-tagline">your world, your vibe ✦</div>
@@ -639,7 +755,7 @@ input, textarea, select, button { font-family: var(--ff); -webkit-appearance: no
 </div>
 
 <!-- ══════════ AUTH ══════════ -->
-<div id="s-auth" class="screen">
+<div id="s-auth" class="screen active">
   <div class="auth-hero">
     <div class="auth-hero-bg"></div>
     <div class="auth-hero-orbs"><div class="auth-orb auth-orb1"></div><div class="auth-orb auth-orb2"></div><div class="auth-orb auth-orb3"></div></div>
@@ -673,8 +789,8 @@ input, textarea, select, button { font-family: var(--ff); -webkit-appearance: no
       <div style="text-align:right;margin-bottom:16px"><a style="font-size:12px;color:var(--blue3);cursor:pointer;font-weight:600">Forgot password?</a></div>
       <button class="btn-primary" id="loginBtn" onclick="doLogin()"><span class="bl">Sign In <span class="arr">→</span></span><div class="spin"></div></button>
       <div class="divider">or continue with</div>
-      <button class="btn-social" onclick="demoLogin()">🌐 Continue with Google</button>
-      <button class="btn-social" onclick="demoLogin()">🍎 Continue with Apple</button>
+      <button class="btn-social">🌐 Continue with Google</button>
+      <button class="btn-social">🍎 Continue with Apple</button>
     </div>
 
     <!-- SIGN UP -->
@@ -691,14 +807,14 @@ input, textarea, select, button { font-family: var(--ff); -webkit-appearance: no
         <div class="form-title">Create your<br><span>Preethie</span></div>
         <div class="form-sub">Upload a photo and tell us who you are.</div>
         <div class="av-upload">
-          <div class="av-ring" onclick="triggerAvUpload()">
+          <label class="av-ring" for="avInput" style="cursor:pointer">
             <div class="av-ring-border"></div>
             <div class="av-ring-inner" id="avRingInner">
-              <input type="file" accept="image/*" id="avInput" onchange="handleAvUpload(this)">
               <img id="avImg" alt="">
               <span id="avEmoji">📷</span>
             </div>
-          </div>
+          </label>
+          <input type="file" accept="image/*" id="avInput" style="display:none" onchange="handleAvUpload(this)">
           <div class="av-label" id="avLabel">Tap to add photo</div>
         </div>
         <div class="g2">
@@ -762,8 +878,8 @@ input, textarea, select, button { font-family: var(--ff); -webkit-appearance: no
           <div class="ds-sec-label">You</div>
           <button class="ds-btn" id="dsb-gallery" onclick="showPanel('gallery')"><span class="ds-ico">🖼</span><span>Gallery</span></button>
           <button class="ds-btn" id="dsb-profile" onclick="showPanel('profile')"><span class="ds-ico">👤</span><span>Profile</span></button>
-          <button class="ds-btn" id="dsb-messages" onclick="showPanel('messages')"><span class="ds-ico">💬</span><span>Messages</span><span class="ds-badge">3</span></button>
-          <button class="ds-btn" id="dsb-notifications" onclick="showPanel('notifications')"><span class="ds-ico">🔔</span><span>Notifications</span><span class="ds-badge">5</span></button>
+          <button class="ds-btn" id="dsb-messages" onclick="showPanel('messages')"><span class="ds-ico">💬</span><span>Messages</span></button>
+          <button class="ds-btn" id="dsb-notifications" onclick="showPanel('notifications')"><span class="ds-ico">🔔</span><span>Notifications</span></button>
         </div>
         <div class="ds-section">
           <div class="ds-sec-label">Account</div>
@@ -859,7 +975,8 @@ input, textarea, select, button { font-family: var(--ff); -webkit-appearance: no
               </div>
             </div>
             <div id="gallView-albums">
-              <div class="drop-zone"><input type="file" accept="image/*" multiple onchange="handleMultiUpload(this)"><div class="dz-ico">📸</div><div class="dz-text">Drop photos here or <span>browse to upload</span></div><div class="dz-hint">JPG · PNG · WebP · up to 20MB</div></div>
+              <label class="drop-zone" for="gallUploadInput" style="cursor:pointer"><div class="dz-ico">📸</div><div class="dz-text">Tap here or <span>browse to upload</span></div><div class="dz-hint">JPG · PNG · WebP · up to 20MB</div></label>
+              <input type="file" accept="image/*" multiple id="gallUploadInput" style="display:none" onchange="handleMultiUpload(this)">
               <div class="albums-grid" id="albumsGrid"></div>
             </div>
             <div id="gallView-photos" style="display:none">
@@ -993,7 +1110,8 @@ input, textarea, select, button { font-family: var(--ff); -webkit-appearance: no
 <div class="modal-overlay" id="uploadModal" onclick="if(event.target===this)closeModal('uploadModal')">
   <div class="modal-box">
     <div class="modal-head"><div class="modal-title">Upload Photos</div><button class="modal-close" onclick="closeModal('uploadModal')">✕</button></div>
-    <div class="drop-zone" style="margin-bottom:14px"><input type="file" accept="image/*" multiple id="uploadInput" onchange="handleMultiUpload(this)"><div class="dz-ico">📸</div><div class="dz-text">Tap to select photos</div><div class="dz-hint" id="uploadCount">No files selected</div></div>
+    <label class="drop-zone" for="uploadInput" style="margin-bottom:14px;cursor:pointer"><div class="dz-ico">📸</div><div class="dz-text">Tap to <span>select photos</span></div><div class="dz-hint" id="uploadCount">No files selected</div></label>
+    <input type="file" accept="image/*" multiple id="uploadInput" style="display:none" onchange="handleMultiUpload(this)">
     <div class="field"><label>Add to Album (optional)</label><select class="fi ni" id="uploadAlbumSel"><option value="">— No album —</option></select></div>
     <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--w3);margin:14px 0 9px">Photo Privacy</div>
     <div class="priv-grid" id="uploadPrivGrid">
@@ -1043,6 +1161,13 @@ input, textarea, select, button { font-family: var(--ff); -webkit-appearance: no
 // ══════════════════════════════════════════
 //  DATA LAYER
 // ══════════════════════════════════════════
+const APP_VERSION = 'preethie_v3';
+// Clear stale data from old versions
+if (localStorage.getItem('preethie_ver') !== APP_VERSION) {
+  ['preethie_s','preethie_ph','preethie_alb','preethie_po',
+   'miyh_s','miyh_ph','miyh_alb','miyh_po'].forEach(k => localStorage.removeItem(k));
+  localStorage.setItem('preethie_ver', APP_VERSION);
+}
 const DB = {
   sess: () => JSON.parse(localStorage.getItem('preethie_s') || 'null'),
   setSess: v => localStorage.setItem('preethie_s', JSON.stringify(v)),
@@ -1066,13 +1191,17 @@ window.addEventListener('orientationchange', () => setTimeout(setVh, 200));
 // ══════════════════════════════════════════
 //  BOOT
 // ══════════════════════════════════════════
-window.addEventListener('DOMContentLoaded', () => {
-  setTimeout(() => {
-    const sess = DB.sess();
-    if (sess) { activateScreen('app'); initApp(); }
-    else activateScreen('auth');
-  }, 1600);
-});
+// Auth screen is already active by default in HTML
+// Check if user has a valid session
+(function boot() {
+  const sess = DB.sess();
+  if (sess && sess.username) {
+    // Valid session - show splash then go to app
+    activateScreen('splash');
+    setTimeout(() => { activateScreen('app'); initApp(); }, 1600);
+  }
+  // else: auth screen is already visible, nothing to do
+})();
 
 function activateScreen(id) {
   document.querySelectorAll('.screen').forEach(s => { s.classList.remove('active'); });
@@ -1085,12 +1214,7 @@ function activateScreen(id) {
 // ══════════════════════════════════════════
 let avatarDataUrl = null, selectedPrivacy = 'public', uploadPrivacy = 'public', albumPrivacy = 'public';
 let pendingFiles = [], currentAlbumId = null, currentReelIndex = 0;
-const DEMO_USERS = [
-  { name: 'Zara Ahmed', username: 'zara.vibes', emoji: '🌸' },
-  { name: 'Kofi Mensah', username: 'kofi.creates', emoji: '🎵' },
-  { name: 'Nadia Osei', username: 'nadia_lens', emoji: '📸' },
-  { name: 'Remi Lagos', username: 'remi.world', emoji: '🌍' },
-];
+// No demo users
 
 function switchAuthTab(tab) {
   document.getElementById('tab-login').classList.toggle('on', tab === 'login');
@@ -1110,7 +1234,7 @@ function toggleEye(id, btn) {
 function showErr(id, msg) { const e = document.getElementById(id); e.textContent = msg; e.classList.add('on'); }
 function clearErr(id) { document.getElementById(id)?.classList.remove('on'); }
 
-function triggerAvUpload() { document.getElementById('avInput').click(); }
+function triggerAvUpload() { document.getElementById('avInput').click(); } // kept for compat
 function handleAvUpload(inp) {
   if (!inp.files?.[0]) return;
   const r = new FileReader();
@@ -1193,36 +1317,60 @@ function goStep(n) {
 }
 
 function createAccount() {
+  clearErr('regErr');
   if (!document.getElementById('termsChk').checked) return showErr('regErr', 'Please accept the Terms to continue');
+  const fname = document.getElementById('rFname').value.trim();
+  const lname = document.getElementById('rLname').value.trim();
+  const uname = document.getElementById('rUsername').value.trim();
+  const email = document.getElementById('rEmail').value.trim();
+  if (!fname || !lname) return showErr('regErr', 'Please enter your full name');
+  if (!uname) return showErr('regErr', 'Please choose a username');
+  if (!email) return showErr('regErr', 'Please enter your email');
   const btn = document.getElementById('createBtn'); btn.classList.add('ld');
   setTimeout(() => {
     btn.classList.remove('ld');
     const sess = {
-      name: document.getElementById('rFname').value.trim() + ' ' + document.getElementById('rLname').value.trim(),
-      username: document.getElementById('rUsername').value.trim(),
-      avatar: avatarDataUrl, privacy: selectedPrivacy, createdAt: Date.now()
+      name: fname + ' ' + lname,
+      username: uname,
+      email: email,
+      avatar: avatarDataUrl,
+      privacy: selectedPrivacy,
+      createdAt: Date.now()
     };
-    DB.setSess(sess); showSuccess(sess);
+    DB.setSess(sess);
+    showSuccess(sess);
   }, 1100);
 }
 
 function doLogin() {
   const id = document.getElementById('loginId').value.trim();
   const pw = document.getElementById('loginPwd').value;
-  if (!id || !pw) return showErr('loginErr', 'Please fill in both fields');
+  clearErr('loginErr');
+  if (!id) return showErr('loginErr', 'Please enter your email or username');
+  if (!pw) return showErr('loginErr', 'Please enter your password');
+  if (pw.length < 6) return showErr('loginErr', 'Password must be at least 6 characters');
   const btn = document.getElementById('loginBtn'); btn.classList.add('ld');
   setTimeout(() => {
     btn.classList.remove('ld');
+    // Check if a registered account exists
     const existing = DB.sess();
-    const sess = existing || { name: id.includes('@') ? id.split('@')[0] : id, username: id.split('@')[0].replace(/\s/g,'_'), avatar: null, createdAt: Date.now() };
-    DB.setSess(sess); showSuccess(sess);
+    if (existing && existing.username && (existing.username === id || existing.email === id)) {
+      showSuccess(existing);
+    } else if (existing && existing.email && existing.email === id) {
+      showSuccess(existing);
+    } else {
+      // Create a session with entered info (first time login or no registration)
+      const uname = id.includes('@') ? id.split('@')[0].replace(/[^a-zA-Z0-9_]/g,'_') : id;
+      const name = uname.charAt(0).toUpperCase() + uname.slice(1).replace(/_/g,' ');
+      const sess = { name, username: uname, email: id, avatar: null, emoji: '✨', createdAt: Date.now() };
+      DB.setSess(sess);
+      showSuccess(sess);
+    }
   }, 800);
 }
 
 function demoLogin() {
-  const d = DEMO_USERS[Math.floor(Math.random() * DEMO_USERS.length)];
-  const sess = { name: d.name, username: d.username, avatar: null, emoji: d.emoji, createdAt: Date.now() };
-  DB.setSess(sess); showSuccess(sess);
+  // Disabled — user must register
 }
 
 function showSuccess(sess) {
@@ -1259,6 +1407,7 @@ function initApp() {
   if (s.avatar) myRing.innerHTML = `<img src="${s.avatar}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
   showPanel('feed');
   renderSidebar();
+  maybeSimulateCall();
 }
 
 // ══════════════════════════════════════════
@@ -1313,7 +1462,7 @@ function renderFeed() {
   document.getElementById('feedPosts').innerHTML = allPosts.map((p, i) => {
     const isLiked = Array.isArray(p.likes) && p.likes.includes(DB.sess()?.username);
     const likeCount = Array.isArray(p.likes) ? p.likes.length : (p.likes || 0);
-    return `<div class="post-card" style="animation-delay:${i * 0.06}s">
+    return `<div class="post-card" style="animation-delay:${i * 0.06}s" id="pc-${p.id}">
       <div class="post-head">
         <div class="post-av">${p.avatar ? `<img src="${p.avatar}" alt="">` : (p.emoji || p.name?.[0] || '?')}</div>
         <div style="flex:1">
@@ -1350,11 +1499,7 @@ function toggleLike(id, btn) {
 // ══════════════════════════════════════════
 //  STORIES
 // ══════════════════════════════════════════
-const STORY_USERS = [
-  { name: 'Zara', emoji: '🌸' }, { name: 'Kofi', emoji: '🎵' },
-  { name: 'Nadia', emoji: '📸' }, { name: 'Remi', emoji: '🌍' },
-  { name: 'Aisha', emoji: '💫' }, { name: 'Jay', emoji: '🎯' },
-];
+const STORY_USERS = [];
 
 function renderStories() {
   const s = DB.sess();
@@ -1410,11 +1555,19 @@ const REELS_DATA = [
 ];
 
 function renderReels() {
+  const userPosts = DB.posts().filter(p => p.photoUrl);
+  if (!userPosts.length) {
+    document.getElementById('reelContainer').innerHTML = `<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:rgba(255,255,255,0.5);text-align:center;padding:40px"><div style="font-size:60px;margin-bottom:16px">🎬</div><div style="font-family:var(--ffd);font-size:18px;margin-bottom:8px">No Reels Yet</div><div style="font-size:13px;margin-bottom:24px">Upload photos or videos to appear here</div><button onclick="openUploadModal()" style="background:var(--blue);border:none;border-radius:12px;padding:12px 28px;color:#fff;font-family:var(--ffd);font-size:14px;cursor:pointer">Upload Now</button></div>`;
+    return;
+  }
   renderReel(currentReelIndex);
 }
 
 function renderReel(idx) {
-  const r = REELS_DATA[((idx % REELS_DATA.length) + REELS_DATA.length) % REELS_DATA.length];
+  const s = DB.sess();
+  const userPosts = DB.posts().filter(p => p.photoUrl);
+  if (!userPosts.length) { renderReels(); return; }
+  const r = { user: s?.username || 'you', name: s?.name || 'You', emoji: s?.emoji || '✨', avatar: s?.avatar, caption: userPosts[((idx % userPosts.length) + userPosts.length) % userPosts.length].text || '', photoUrl: userPosts[((idx % userPosts.length) + userPosts.length) % userPosts.length].photoUrl, grad: ['reel-g1','reel-g2','reel-g3','reel-g4'][idx%4] };
   const container = document.getElementById('reelContainer');
   container.innerHTML = `
     <div class="reel-item">
@@ -1423,11 +1576,12 @@ function renderReel(idx) {
         <div class="reel-circle reel-float" style="width:300px;height:300px;background:rgba(29,110,245,0.08);top:-80px;left:-60px;--fx:20px;--fy:15px;animation-duration:18s"></div>
         <div class="reel-circle reel-float" style="width:200px;height:200px;background:rgba(124,58,237,0.07);bottom:100px;right:-40px;--fx:-15px;--fy:20px;animation-duration:14s"></div>
       </div>
+      ${r.photoUrl ? `<img src="${r.photoUrl}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">` : ''}
       <div class="reel-content">
-        <div class="reel-avatar">${r.emoji}</div>
+        <div class="reel-avatar">${r.avatar ? `<img src="${r.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : r.emoji}</div>
         <div class="reel-username">@${r.user}</div>
         <div class="reel-caption">${r.caption}</div>
-        <div class="reel-music">🎵 ${r.music}</div>
+        <div class="reel-music">🎵 Original Sound</div>
       </div>
       <div class="reel-actions">
         <div class="reel-act" onclick="this.querySelector('.reel-act-ico').style.transform='scale(1.3)';setTimeout(()=>this.querySelector('.reel-act-ico').style.transform='',300)">
@@ -1643,15 +1797,13 @@ function ptab(el) { document.querySelectorAll('.prof-tab').forEach(t => t.classL
 // ══════════════════════════════════════════
 //  MESSAGES (Snapchat-style)
 // ══════════════════════════════════════════
-const MSG_DATA = [
-  { id:'m1', name:'Zara Ahmed', emoji:'🌸', preview:'Omg did you see that sunset?? 🌅', time:'2m', unread:true, online:true },
-  { id:'m2', name:'Kofi Mensah', emoji:'🎵', preview:'New track is nearly done 🔥', time:'18m', unread:true, online:false },
-  { id:'m3', name:'Nadia Osei', emoji:'📸', preview:'Check out these shots I took', time:'1h', unread:false, online:true },
-  { id:'m4', name:'Remi Lagos', emoji:'🌍', preview:'We should explore downtown this weekend', time:'3h', unread:false, online:false },
-  { id:'m5', name:'Aisha Diallo', emoji:'💫', preview:'Loved your story today!', time:'5h', unread:false, online:true },
-];
+const MSG_DATA = [];
 
 function renderMessages() {
+  if (!MSG_DATA.length) {
+    document.getElementById('msgList').innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px;text-align:center;color:var(--w3)"><div style="font-size:56px;margin-bottom:14px">💬</div><div style="font-family:var(--ffd);font-size:16px;color:var(--w2);margin-bottom:8px">No Messages Yet</div><div style="font-size:13px;line-height:1.6">When you connect with people on Preethie,<br>your conversations will appear here.</div></div>`;
+    return;
+  }
   document.getElementById('msgList').innerHTML = MSG_DATA.map(m => `
     <div class="msg-item ${m.unread ? 'unread' : ''}" onclick="openChat('${m.id}', '${m.name}', '${m.emoji}')">
       <div class="msg-av">${m.emoji}${m.online ? '<div class="msg-online"></div>' : ''}</div>
@@ -1674,8 +1826,8 @@ function openChat(id, name, emoji) {
         <button class="chat-back" onclick="renderMessages();showPanel('messages')">←</button>
         <div class="chat-av">${emoji}</div>
         <div style="flex:1"><div class="chat-uname">${name}</div><div class="chat-status">Active now</div></div>
-        <button class="ic-btn">📞</button>
-        <button class="ic-btn">📹</button>
+        <button class="ic-btn" onclick="startVoiceCall('${name}','${emoji}')" title="Voice Call">📞</button>
+        <button class="ic-btn" onclick="startVideoCall('${name}','${emoji}')" title="Video Call">📹</button>
       </div>
       <div class="chat-messages" id="chatMsgs">
         ${msgs.map(m => `<div class="chat-msg ${m.me ? 'me' : 'them'}"><div class="chat-bubble">${m.text}</div><div class="chat-time">${m.time}</div></div>`).join('')}
@@ -1706,27 +1858,18 @@ function sendChatMsg() {
 // ══════════════════════════════════════════
 //  NOTIFICATIONS
 // ══════════════════════════════════════════
-const NOTIF_DATA = [
-  { emoji:'🌸', name:'Zara Ahmed', action:'liked your photo', thumb:'🌅', time:'2m', unread:true },
-  { emoji:'🎵', name:'Kofi Mensah', action:'started following you', time:'18m', unread:true },
-  { emoji:'📸', name:'Nadia Osei', action:'commented: "Beautiful shot!! 😍"', thumb:'📷', time:'1h', unread:true },
-  { emoji:'🌍', name:'Remi Lagos', action:'liked your post', time:'2h', unread:false },
-  { emoji:'💫', name:'Aisha Diallo', action:'mentioned you in a story', time:'4h', unread:false },
-  { emoji:'🎯', name:'Jay Obi', action:'followed you back', time:'6h', unread:false },
-];
+const NOTIF_DATA = [];
 
 function renderNotifications() {
+  if (!NOTIF_DATA.length) {
+    document.getElementById('notifWrap').innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px;text-align:center;color:var(--w3)"><div style="font-size:56px;margin-bottom:14px">🔔</div><div style="font-family:var(--ffd);font-size:16px;color:var(--w2);margin-bottom:8px">All Quiet</div><div style="font-size:13px;line-height:1.6">Your activity and interactions<br>will show up here.</div></div>`;
+    return;
+  }
   const newNotifs = NOTIF_DATA.filter(n => n.unread);
   const oldNotifs = NOTIF_DATA.filter(n => !n.unread);
   let html = '';
-  if (newNotifs.length) {
-    html += `<div class="notif-group-title">New</div>`;
-    html += newNotifs.map(n => notifHTML(n)).join('');
-  }
-  if (oldNotifs.length) {
-    html += `<div class="notif-group-title">Earlier</div>`;
-    html += oldNotifs.map(n => notifHTML(n)).join('');
-  }
+  if (newNotifs.length) { html += `<div class="notif-group-title">New</div>`; html += newNotifs.map(n => notifHTML(n)).join(''); }
+  if (oldNotifs.length) { html += `<div class="notif-group-title">Earlier</div>`; html += oldNotifs.map(n => notifHTML(n)).join(''); }
   document.getElementById('notifWrap').innerHTML = html;
 }
 
@@ -1741,21 +1884,12 @@ function notifHTML(n) {
 // ══════════════════════════════════════════
 //  RIGHT SIDEBAR
 // ══════════════════════════════════════════
-const SUGGESTED = [
-  { name: 'Aisha Diallo', handle: 'aisha.d', emoji: '💫', mutual: '12 mutual' },
-  { name: 'Jay Obi', handle: 'jay.obi', emoji: '🎯', mutual: '8 mutual' },
-  { name: 'Priya Sen', handle: 'priya.creates', emoji: '🎨', mutual: '5 mutual' },
-];
+const SUGGESTED = [];
 const TRENDING = ['#PreethieVibes', '#GoldenHour', '#AfroCreatives', '#StreetPhotography', '#NewMusic'];
 
 function renderSidebar() {
   const sug = document.getElementById('wgtSuggested');
-  if (sug) sug.innerHTML = SUGGESTED.map(u => `
-    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bd)">
-      <div style="width:38px;height:38px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${u.emoji}</div>
-      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${u.name}</div><div style="font-size:10px;color:var(--w3)">${u.mutual}</div></div>
-      <button style="background:rgba(29,110,245,0.1);border:1.5px solid var(--bdb);border-radius:8px;padding:5px 12px;color:var(--blue3);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap" onclick="this.textContent='✓';this.style.background='rgba(74,222,128,0.1)';this.style.borderColor='rgba(74,222,128,0.3)';this.style.color='#4ade80'">Follow</button>
-    </div>`).join('');
+  if (sug) sug.innerHTML = SUGGESTED.length ? SUGGESTED.map(u => `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bd)"><div style="width:38px;height:38px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${u.emoji}</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">${u.name}</div></div></div>`).join('') : `<div style="font-size:12px;color:var(--w3);padding:4px 0">No suggestions yet</div>`;
   const trnd = document.getElementById('wgtTrending');
   if (trnd) trnd.innerHTML = TRENDING.map((t, i) => `<div style="padding:7px 0;border-bottom:1px solid var(--bd);cursor:pointer;transition:color .14s" onmouseover="this.style.color='var(--blue3)'" onmouseout="this.style.color=''"><span style="font-size:11px;color:var(--w3);margin-right:8px">${i+1}</span><span style="font-size:13px;font-weight:600">${t}</span></div>`).join('');
   const photos = DB.photos().slice(0, 6);
@@ -1787,6 +1921,305 @@ function ago(ts) {
 }
 
 function updateDefPriv(v) { document.getElementById('defPrivLabel').textContent = 'Currently: ' + v.charAt(0).toUpperCase() + v.slice(1); }
+
+// ══════════════════════════════════════════
+//  SHARE
+// ══════════════════════════════════════════
+async function sharePost(idOrEl) {
+  const posts = [...DB.posts(), ...SAMPLE_POSTS];
+  const p = typeof idOrEl === 'string' ? posts.find(x => x.id === idOrEl) : null;
+  const shareText = p ? p.text : 'Check out my Preethie! ✨';
+  const shareData = { title: 'Preethie', text: shareText, url: window.location.href };
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+    } else {
+      await navigator.clipboard.writeText(shareText + '\n' + window.location.href);
+      showToast('📋 Copied to clipboard!');
+    }
+  } catch(e) {
+    await navigator.clipboard.writeText(window.location.href).catch(()=>{});
+    showToast('📋 Link copied!');
+  }
+}
+
+function showToast(msg) {
+  let t = document.getElementById('toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toast';
+    t.style.cssText = 'position:fixed;bottom:max(80px,calc(var(--safe-bottom)+80px));left:50%;transform:translateX(-50%);background:var(--bg4);border:1px solid var(--bdb);color:var(--w);padding:10px 22px;border-radius:24px;font-size:13px;font-weight:600;z-index:9999;backdrop-filter:blur(20px);white-space:nowrap;transition:opacity .3s;pointer-events:none;box-shadow:0 8px 32px rgba(0,0,0,0.5)';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._t);
+  t._t = setTimeout(() => { t.style.opacity = '0'; }, 2500);
+}
+
+
+// ══════════════════════════════════════════
+//  CALL SYSTEM
+// ══════════════════════════════════════════
+let callState = {
+  active:false, type:null, muted:false, speakerOn:false,
+  cameraOn:true, name:'', emoji:'', stream:null,
+  timerInterval:null, seconds:0,
+  incomingType:null, incomingName:'', incomingEmoji:''
+};
+
+function startVoiceCall(name, emoji) {
+  callState.name=name; callState.emoji=emoji; callState.type='voice';
+  callState.seconds=0; callState.muted=false; callState.speakerOn=false;
+  document.getElementById('vcAvInner').textContent=emoji;
+  document.getElementById('vcName').textContent=name;
+  document.getElementById('vcStatus').textContent='Ringing...';
+  document.getElementById('vcTimer').classList.remove('on');
+  document.getElementById('vcMuteBtn').classList.remove('on');
+  document.getElementById('vcMuteBtn').textContent='🎤';
+  document.getElementById('vcSpeakerBtn').classList.remove('on');
+  document.getElementById('voiceCallScreen').classList.add('on');
+  navigator.mediaDevices?.getUserMedia({audio:true})
+    .then(s=>{callState.stream=s;}).catch(()=>{});
+  setTimeout(()=>{
+    if(!document.getElementById('voiceCallScreen').classList.contains('on'))return;
+    document.getElementById('vcStatus').textContent='Connected';
+    document.getElementById('vcTimer').classList.add('on');
+    startCallTimer('vcTimer');
+  },2500);
+}
+
+function endCall() {
+  stopCallTimer();
+  if(callState.stream){callState.stream.getTracks().forEach(t=>t.stop());callState.stream=null;}
+  document.getElementById('voiceCallScreen').classList.remove('on');
+  showToast('📞 Call ended · '+formatTime(callState.seconds));
+}
+
+function toggleMute() {
+  callState.muted=!callState.muted;
+  const btn=document.getElementById('vcMuteBtn');
+  btn.classList.toggle('on',callState.muted);
+  btn.textContent=callState.muted?'🔇':'🎤';
+  if(callState.stream)callState.stream.getAudioTracks().forEach(t=>t.enabled=!callState.muted);
+  showToast(callState.muted?'🔇 Muted':'🎤 Unmuted');
+}
+
+function toggleSpeaker() {
+  callState.speakerOn=!callState.speakerOn;
+  document.getElementById('vcSpeakerBtn').classList.toggle('on',callState.speakerOn);
+  showToast(callState.speakerOn?'🔊 Speaker on':'🔈 Speaker off');
+}
+
+async function startVideoCall(name, emoji) {
+  callState.name=name; callState.emoji=emoji; callState.type='video';
+  callState.seconds=0; callState.muted=false; callState.cameraOn=true;
+  document.getElementById('videoCallerName').textContent=name;
+  document.getElementById('videoCallerStatus').textContent='Connecting...';
+  document.getElementById('videoRemoteEmoji').textContent=emoji;
+  document.getElementById('vidMuteBtn').classList.remove('on');
+  document.getElementById('vidMuteBtn').textContent='🎤';
+  document.getElementById('videoCallScreen').classList.add('on');
+  try {
+    const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:true});
+    callState.stream=stream;
+    const lv=document.getElementById('localVideo');
+    lv.srcObject=stream; lv.classList.add('on');
+    document.getElementById('localEmoji').style.display='none';
+  } catch(e){showToast('📷 Camera access denied');}
+  setTimeout(()=>{
+    if(!document.getElementById('videoCallScreen').classList.contains('on'))return;
+    document.getElementById('videoCallerStatus').textContent='🟢 Connected';
+    startCallTimer(null);
+  },2000);
+}
+
+function endVideoCall() {
+  stopCallTimer();
+  if(callState.stream){callState.stream.getTracks().forEach(t=>t.stop());callState.stream=null;}
+  const lv=document.getElementById('localVideo');
+  lv.srcObject=null; lv.classList.remove('on');
+  document.getElementById('localEmoji').style.display='';
+  document.getElementById('videoCallScreen').classList.remove('on');
+  showToast('📹 Video call ended · '+formatTime(callState.seconds));
+}
+
+function toggleVideoMute() {
+  callState.muted=!callState.muted;
+  const btn=document.getElementById('vidMuteBtn');
+  btn.classList.toggle('on',callState.muted);
+  btn.textContent=callState.muted?'🔇':'🎤';
+  if(callState.stream)callState.stream.getAudioTracks().forEach(t=>t.enabled=!callState.muted);
+  showToast(callState.muted?'🔇 Muted':'🎤 Unmuted');
+}
+
+function toggleCamera() {
+  callState.cameraOn=!callState.cameraOn;
+  const btn=document.getElementById('vidCamBtn');
+  btn.textContent=callState.cameraOn?'📷':'📵';
+  btn.style.background=callState.cameraOn?'':'rgba(239,68,68,0.2)';
+  if(callState.stream)callState.stream.getVideoTracks().forEach(t=>t.enabled=callState.cameraOn);
+  showToast(callState.cameraOn?'📷 Camera on':'📵 Camera off');
+}
+
+function toggleVideoSpeaker() {
+  callState.speakerOn=!callState.speakerOn;
+  document.getElementById('vidSpeakerBtn').classList.toggle('on',callState.speakerOn);
+  showToast(callState.speakerOn?'🔊 Speaker on':'🔈 Speaker off');
+}
+
+async function flipCamera() {
+  if(!callState.stream)return;
+  const tracks=callState.stream.getVideoTracks();
+  if(!tracks.length)return;
+  const cur=tracks[0].getSettings?.()?.facingMode||'user';
+  const next=cur==='user'?'environment':'user';
+  try {
+    const ns=await navigator.mediaDevices.getUserMedia({video:{facingMode:next},audio:true});
+    const lv=document.getElementById('localVideo');
+    tracks[0].stop();
+    callState.stream.removeTrack(tracks[0]);
+    callState.stream.addTrack(ns.getVideoTracks()[0]);
+    lv.srcObject=callState.stream;
+    showToast(next==='user'?'🤳 Front camera':'📷 Rear camera');
+  } catch(e){showToast('⚠ Camera flip failed');}
+}
+
+function simulateIncomingCall(name, emoji, type) {
+  callState.incomingName=name; callState.incomingEmoji=emoji; callState.incomingType=type||'voice';
+  document.getElementById('icAv').textContent=emoji;
+  document.getElementById('icName').textContent=name;
+  document.getElementById('icType').textContent=type==='video'?'📹 Video Call':'📞 Voice Call';
+  document.getElementById('icAnswerBtn').textContent=type==='video'?'📹':'📞';
+  document.getElementById('incomingCall').classList.add('on');
+  clearTimeout(window._incomingTimer);
+  window._incomingTimer=setTimeout(declineIncoming,30000);
+}
+
+function answerIncoming() {
+  clearTimeout(window._incomingTimer);
+  document.getElementById('incomingCall').classList.remove('on');
+  if(callState.incomingType==='video')startVideoCall(callState.incomingName,callState.incomingEmoji);
+  else startVoiceCall(callState.incomingName,callState.incomingEmoji);
+}
+
+function declineIncoming() {
+  clearTimeout(window._incomingTimer);
+  document.getElementById('incomingCall').classList.remove('on');
+  showToast('📵 Call declined');
+}
+
+function startCallTimer(elemId) {
+  callState.seconds=0;
+  clearInterval(callState.timerInterval);
+  callState.timerInterval=setInterval(()=>{
+    callState.seconds++;
+    if(elemId){const el=document.getElementById(elemId);if(el)el.textContent=formatTime(callState.seconds);}
+  },1000);
+}
+function stopCallTimer(){clearInterval(callState.timerInterval);callState.timerInterval=null;}
+function formatTime(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
+
+function maybeSimulateCall() {
+  if(sessionStorage.getItem('preethie_call_demo'))return;
+  sessionStorage.setItem('preethie_call_demo','1');
+  const callers=[{name:'Zara',emoji:'🌸',type:'voice'},{name:'Kofi',emoji:'🎵',type:'video'}];
+  const c=callers[Math.floor(Math.random()*callers.length)];
+  setTimeout(()=>simulateIncomingCall(c.name,c.emoji,c.type),9000);
+}
+
 </script>
+
+<!-- ══════════ VOICE CALL SCREEN ══════════ -->
+<div class="call-overlay" id="voiceCallScreen">
+  <div class="voice-call">
+    <div class="vc-orb1"></div>
+    <div class="vc-orb2"></div>
+    <div class="vc-top">
+      <div class="vc-avatar">
+        <div class="vc-av-ring"></div>
+        <div class="vc-av-inner" id="vcAvInner">👤</div>
+      </div>
+      <div class="vc-waves"><div class="vc-wave"></div><div class="vc-wave"></div><div class="vc-wave"></div></div>
+      <div class="vc-name" id="vcName">Calling...</div>
+      <div class="vc-status" id="vcStatus">Ringing...</div>
+      <div class="vc-timer" id="vcTimer">00:00</div>
+    </div>
+    <div class="vc-actions">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+        <button class="call-btn mute" id="vcMuteBtn" onclick="toggleMute()" title="Mute">🎤</button>
+        <span style="font-size:10px;color:rgba(255,255,255,0.4)">Mute</span>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+        <button class="call-btn hangup" onclick="endCall()" title="End call">📵</button>
+        <span style="font-size:10px;color:rgba(255,255,255,0.4)">End</span>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+        <button class="call-btn speaker" id="vcSpeakerBtn" onclick="toggleSpeaker()" title="Speaker">🔊</button>
+        <span style="font-size:10px;color:rgba(255,255,255,0.4)">Speaker</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ VIDEO CALL SCREEN ══════════ -->
+<div class="call-overlay" id="videoCallScreen">
+  <div class="video-call">
+    <!-- Remote video / avatar -->
+    <div class="video-remote" id="videoRemote">
+      <video id="remoteVideo" autoplay playsinline></video>
+      <span id="videoRemoteEmoji">👤</span>
+    </div>
+    <!-- Local video (self preview) -->
+    <div class="video-local" id="videoLocal" onclick="flipCamera()">
+      <video id="localVideo" autoplay muted playsinline></video>
+      <span id="localEmoji">🤳</span>
+    </div>
+    <!-- Top bar -->
+    <div class="video-topbar">
+      <div class="video-caller-info">
+        <div class="video-caller-name" id="videoCallerName">Video Call</div>
+        <div class="video-caller-status" id="videoCallerStatus">Connecting...</div>
+      </div>
+    </div>
+    <!-- Controls -->
+    <div class="video-controls">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:5px">
+        <button class="call-btn mute" id="vidMuteBtn" onclick="toggleVideoMute()">🎤</button>
+        <span style="font-size:9px;color:rgba(255,255,255,0.4)">Mute</span>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:5px">
+        <button class="call-btn video-switch" id="vidCamBtn" onclick="toggleCamera()">📷</button>
+        <span style="font-size:9px;color:rgba(255,255,255,0.4)">Camera</span>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:5px">
+        <button class="call-btn hangup" onclick="endVideoCall()">📵</button>
+        <span style="font-size:9px;color:rgba(255,255,255,0.4)">End</span>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:5px">
+        <button class="call-btn speaker" id="vidSpeakerBtn" onclick="toggleVideoSpeaker()">🔊</button>
+        <span style="font-size:9px;color:rgba(255,255,255,0.4)">Speaker</span>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:5px">
+        <button class="call-btn" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.15);color:#fff" onclick="flipCamera()">🔄</button>
+        <span style="font-size:9px;color:rgba(255,255,255,0.4)">Flip</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ INCOMING CALL TOAST ══════════ -->
+<div class="incoming-call" id="incomingCall">
+  <div class="ic-av" id="icAv">👤</div>
+  <div class="ic-info">
+    <div class="ic-name" id="icName">Incoming</div>
+    <div class="ic-type" id="icType">📞 Voice Call</div>
+  </div>
+  <div class="ic-btns">
+    <button class="ic-decline" onclick="declineIncoming()" title="Decline">📵</button>
+    <button class="ic-answer-btn" id="icAnswerBtn" onclick="answerIncoming()" title="Answer">📞</button>
+  </div>
+</div>
+
 </body>
 </html>
