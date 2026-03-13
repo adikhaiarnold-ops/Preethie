@@ -233,7 +233,7 @@ input, textarea, select, button { font-family: var(--ff); -webkit-appearance: no
 .ic-btn:hover { border-color: var(--bdb); color: var(--blue3); }
 .panel-body { flex: 1; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; scrollbar-color: var(--bd) transparent; }
 .panel { display: none; }
-.panel.on { display: block; animation: fadeIn 0.2s ease both; }
+.panel.on { display: block; animation: fadeIn 0.2s ease both; min-height: 100%; }
 
 /* ── RIGHT SIDEBAR ── */
 .right-sidebar { width: 280px; flex-shrink: 0; border-left: 1px solid var(--bd); background: var(--bg2); height: 100vh; overflow-y: auto; padding: 18px 14px; scrollbar-width: none; }
@@ -1025,7 +1025,7 @@ input, textarea, select, button { font-family: var(--ff); -webkit-appearance: no
           <div class="explore-wrap">
             <div class="search-bar">
               <span class="search-ico">🔍</span>
-              <input type="text" id="searchInput" placeholder="Search people, posts, tags..." oninput="handleSearch(this.value)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+              <input type="text" id="searchInput" placeholder="Search people, posts, tags..." oninput="handleSearch(this.value)" onfocus="ensureExploreReady()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
             </div>
             <div class="search-tabs">
               <button class="s-tab on" id="st-people" onclick="switchSearchTab('people',this)">👥 People</button>
@@ -1242,11 +1242,10 @@ input, textarea, select, button { font-family: var(--ff); -webkit-appearance: no
 // ══════════════════════════════════════════
 //  DATA LAYER
 // ══════════════════════════════════════════
-const APP_VERSION = 'preethie_v3';
-// Clear stale data from old versions
+const APP_VERSION = 'preethie_v4';
+// Only clear old miyh data, never touch preethie session
 if (localStorage.getItem('preethie_ver') !== APP_VERSION) {
-  ['preethie_s','preethie_ph','preethie_alb','preethie_po',
-   'miyh_s','miyh_ph','miyh_alb','miyh_po'].forEach(k => localStorage.removeItem(k));
+  ['miyh_s','miyh_ph','miyh_alb','miyh_po'].forEach(k => localStorage.removeItem(k));
   localStorage.setItem('preethie_ver', APP_VERSION);
 }
 const DB = {
@@ -1867,11 +1866,25 @@ function getAllUsers() {
 // ══════════════════════════════════════════
 let currentSearchTab = 'people';
 
+function ensureExploreReady() {
+  const sr = document.getElementById('searchResults');
+  const ds = document.getElementById('discoverSection');
+  if (!sr || !ds) return;
+  if (!document.getElementById('discoverUsers').innerHTML) renderDiscover();
+  if (!document.getElementById('trendingTags').innerHTML) renderTrendingTags();
+}
+
 function renderExplore() {
-  document.getElementById('searchResults').style.display = 'none';
-  document.getElementById('discoverSection').style.display = '';
+  const sr = document.getElementById('searchResults');
+  const ds = document.getElementById('discoverSection');
+  if (!sr || !ds) return;
+  sr.style.display = 'none';
+  ds.style.display = '';
   const si = document.getElementById('searchInput');
   if (si) si.value = '';
+  currentSearchTab = 'people';
+  document.querySelectorAll('.s-tab').forEach(b => b.classList.remove('on'));
+  document.getElementById('st-people')?.classList.add('on');
   renderDiscover();
   renderTrendingTags();
 }
@@ -1907,10 +1920,12 @@ function switchSearchTab(tab, el) {
 function handleSearch(q) {
   const sr = document.getElementById('searchResults');
   const ds = document.getElementById('discoverSection');
-  if (!q.trim()) {
+  if (!sr || !ds) return;
+  if (!q || !q.trim()) {
     sr.style.display = 'none';
     ds.style.display = '';
     renderDiscover();
+    renderTrendingTags();
     return;
   }
   sr.style.display = '';
