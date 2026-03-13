@@ -1242,8 +1242,8 @@ input, textarea, select, button { font-family: var(--ff); -webkit-appearance: no
 // ══════════════════════════════════════════
 //  DATA LAYER
 // ══════════════════════════════════════════
-const APP_VERSION = 'preethie_v4';
-// Only clear old miyh data, never touch preethie session
+const APP_VERSION = 'preethie_v5';
+// Only clear old miyh data — NEVER wipe preethie user data
 if (localStorage.getItem('preethie_ver') !== APP_VERSION) {
   ['miyh_s','miyh_ph','miyh_alb','miyh_po'].forEach(k => localStorage.removeItem(k));
   localStorage.setItem('preethie_ver', APP_VERSION);
@@ -1475,6 +1475,8 @@ function doLogout() { DB.clearSess(); activateScreen('auth'); switchAuthTab('log
 // ══════════════════════════════════════════
 function initApp() {
   const s = DB.sess(); if (!s) { activateScreen('auth'); return; }
+  // Always refresh user registry on login
+  registerUser(s);
   // Set user in sidebar/nav
   const uav = document.getElementById('dsUav');
   if (s.avatar) uav.innerHTML = `<img src="${s.avatar}" alt="">`;
@@ -1489,7 +1491,6 @@ function initApp() {
   if (s.avatar) myRing.innerHTML = `<img src="${s.avatar}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
   showPanel('feed');
   renderSidebar();
-  maybeSimulateCall();
 }
 
 // ══════════════════════════════════════════
@@ -1848,17 +1849,38 @@ function toggleFollow(username) {
 function getRegisteredUsers() { return JSON.parse(localStorage.getItem('preethie_users')||'[]'); }
 function registerUser(sess) {
   const users = getRegisteredUsers();
-  if (!users.find(u => u.username === sess.username)) {
-    users.push({ username:sess.username, name:sess.name, bio:'✨ Living my Preethie life', avatar:sess.avatar, emoji:sess.emoji||'✨', posts:0, followers:0, following:0, tags:[], createdAt:sess.createdAt });
-    localStorage.setItem('preethie_users', JSON.stringify(users));
-  }
+  const idx = users.findIndex(u => u.username === sess.username);
+  const entry = {
+    username: sess.username,
+    name: sess.name,
+    bio: sess.bio || '✨ Living my Preethie life',
+    avatar: sess.avatar || null,
+    emoji: sess.emoji || '✨',
+    email: sess.email || '',
+    posts: DB.posts().filter(p => p.uid === sess.username).length,
+    photos: DB.photos().filter(p => p.uid === sess.username).length,
+    followers: idx >= 0 ? (users[idx].followers || 0) : 0,
+    following: idx >= 0 ? (users[idx].following || 0) : 0,
+    tags: [],
+    createdAt: sess.createdAt || Date.now()
+  };
+  if (idx >= 0) users[idx] = entry;
+  else users.push(entry);
+  localStorage.setItem('preethie_users', JSON.stringify(users));
 }
 
-// all searchable users = seed + registered
+// all searchable users = seed + all registered (including self so others on same device can find you)
 function getAllUsers() {
   const registered = getRegisteredUsers();
+  // Merge seed + registered, registered takes priority (overrides seed if same username)
+  const seedFiltered = USER_SEED.filter(s => !registered.find(r => r.username === s.username));
+  return [...seedFiltered, ...registered];
+}
+
+// users excluding self (for discover/suggestions)
+function getOtherUsers() {
   const me = DB.sess()?.username;
-  return [...USER_SEED, ...registered.filter(u => u.username !== me)];
+  return getAllUsers().filter(u => u.username !== me);
 }
 
 // ══════════════════════════════════════════
@@ -1891,8 +1913,14 @@ function renderExplore() {
 }
 
 function renderDiscover() {
-  const users = getAllUsers().slice(0, 6);
-  document.getElementById('discoverUsers').innerHTML = users.map(u => userRowHTML(u)).join('');
+  const users = getOtherUsers().slice(0, 8);
+  const el = document.getElementById('discoverUsers');
+  if (!el) return;
+  if (!users.length) {
+    el.innerHTML = '<div style="font-size:13px;color:var(--w3);padding:12px 0">No users found yet. Share Preethie with friends!</div>';
+    return;
+  }
+  el.innerHTML = users.map(u => userRowHTML(u)).join('');
 }
 
 function renderTrendingTags() {
@@ -1993,10 +2021,13 @@ function handleSearch(q) {
   const ql = q.toLowerCase();
 
   if (currentSearchTab === 'people') {
+    const me = DB.sess()?.username;
     const users = getAllUsers().filter(u =>
-      u.name.toLowerCase().includes(ql) ||
-      u.username.toLowerCase().includes(ql) ||
-      (u.bio||'').toLowerCase().includes(ql)
+      u.username !== me && (
+        u.name.toLowerCase().includes(ql) ||
+        u.username.toLowerCase().includes(ql) ||
+        (u.bio||'').toLowerCase().includes(ql)
+      )
     );
     if (!users.length) {
       sr.innerHTML = `<div class="search-empty"><div class="search-empty-ico">🔍</div><div class="search-empty-title">No people found</div><div class="search-empty-sub">Try searching by name or @username</div></div>`;
@@ -2484,13 +2515,7 @@ function startCallTimer(elemId) {
 function stopCallTimer(){clearInterval(callState.timerInterval);callState.timerInterval=null;}
 function formatTime(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
 
-function maybeSimulateCall() {
-  if(sessionStorage.getItem('preethie_call_demo'))return;
-  sessionStorage.setItem('preethie_call_demo','1');
-  const callers=[{name:'Zara',emoji:'🌸',type:'voice'},{name:'Kofi',emoji:'🎵',type:'video'}];
-  const c=callers[Math.floor(Math.random()*callers.length)];
-  setTimeout(()=>simulateIncomingCall(c.name,c.emoji,c.type),9000);
-}
+// Simulated calls removed
 
 </script>
 
