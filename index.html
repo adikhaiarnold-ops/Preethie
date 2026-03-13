@@ -741,6 +741,74 @@ input, textarea, select, button { font-family: var(--ff); -webkit-appearance: no
 .ic-answer-btn { width:42px; height:42px; border-radius:50%; background:rgba(34,197,94,0.15); border:1.5px solid rgba(34,197,94,0.3); color:#4ade80; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; }
 .ic-answer-btn:hover { background:rgba(34,197,94,0.25); }
 
+
+/* ════════════════════════════════════════
+   USER SEARCH & PUBLIC PROFILES
+════════════════════════════════════════ */
+.search-tabs { display:flex; gap:4px; margin-bottom:16px; }
+.s-tab { padding:7px 16px; border-radius:9px; border:1.5px solid var(--bd); background:var(--bg3); color:var(--w3); font-size:12px; font-weight:700; cursor:pointer; transition:all .15s; white-space:nowrap; }
+.s-tab.on { background:var(--blue); border-color:var(--blue); color:#fff; }
+
+.user-results { display:flex; flex-direction:column; gap:1px; }
+.user-row { display:flex; align-items:center; gap:12px; padding:12px 4px; border-bottom:1px solid var(--bd); cursor:pointer; transition:background .14s; border-radius:10px; }
+.user-row:hover { background:var(--w5); padding:12px 10px; }
+.user-row-av { width:50px; height:50px; border-radius:50%; background:var(--bg3); display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; position:relative; overflow:hidden; border:2px solid var(--bd); }
+.user-row-av img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.user-row-av.has-ring { border:2px solid var(--blue); box-shadow:0 0 0 2px rgba(29,110,245,0.25); }
+.user-row-info { flex:1; min-width:0; }
+.user-row-name { font-size:14px; font-weight:700; color:var(--w); }
+.user-row-handle { font-size:12px; color:var(--w3); margin-top:1px; }
+.user-row-bio { font-size:11px; color:var(--w3); margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.user-row-meta { display:flex; gap:10px; margin-top:4px; }
+.user-row-stat { font-size:10px; color:var(--w3); }
+.user-row-stat strong { color:var(--w2); }
+.follow-btn { padding:7px 16px; border-radius:9px; border:1.5px solid var(--bdb); background:rgba(29,110,245,0.1); color:var(--blue3); font-size:12px; font-weight:700; cursor:pointer; transition:all .15s; white-space:nowrap; flex-shrink:0; }
+.follow-btn:hover { background:var(--blue); border-color:var(--blue); color:#fff; }
+.follow-btn.following { background:var(--bg3); border-color:var(--bd); color:var(--w3); }
+.follow-btn.following:hover { background:rgba(239,68,68,0.1); border-color:rgba(239,68,68,0.3); color:#f87171; }
+
+.search-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:48px 24px; text-align:center; color:var(--w3); }
+.search-empty-ico { font-size:52px; margin-bottom:14px; }
+.search-empty-title { font-family:var(--ffd); font-size:16px; color:var(--w2); margin-bottom:6px; }
+.search-empty-sub { font-size:13px; line-height:1.6; }
+
+/* Public profile overlay */
+.pub-profile { position:fixed; inset:0; z-index:250; background:var(--bg); display:none; flex-direction:column; overflow-y:auto; }
+.pub-profile.on { display:flex; animation:fadeIn .2s ease both; }
+.pp-back { position:sticky; top:0; z-index:10; display:flex; align-items:center; gap:12px; padding:max(14px,env(safe-area-inset-top)) 16px 12px; background:rgba(8,10,18,0.92); backdrop-filter:blur(20px); border-bottom:1px solid var(--bd); flex-shrink:0; }
+.pp-back-btn { background:none; border:none; color:var(--w3); font-size:22px; cursor:pointer; transition:color .14s; padding:4px; }
+.pp-back-btn:hover { color:var(--w); }
+.pp-back-title { font-family:var(--ffd); font-size:15px; font-weight:700; }
+.pp-cover { height:160px; position:relative; overflow:hidden; flex-shrink:0; }
+.pp-cover-bg { position:absolute; inset:0; background:linear-gradient(135deg,#060b1e,#0c1430); }
+.pp-cover-grid { position:absolute; inset:0; background-image:linear-gradient(rgba(29,110,245,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(29,110,245,0.06) 1px,transparent 1px); background-size:40px 40px; }
+.pp-body { padding:0 16px 80px; }
+.pp-top { display:flex; align-items:flex-end; justify-content:space-between; margin-top:-34px; margin-bottom:12px; }
+.pp-av-wrap { width:72px; height:72px; border-radius:50%; position:relative; flex-shrink:0; }
+.pp-av-ring { position:absolute; inset:-3px; border-radius:50%; background:var(--blueg); animation:storyRing 3s linear infinite; }
+.pp-av-inner { position:absolute; inset:0; border-radius:50%; background:var(--bg2); border:2.5px solid var(--bg); display:flex; align-items:center; justify-content:center; font-size:28px; overflow:hidden; }
+.pp-av-inner img { width:100%; height:100%; object-fit:cover; }
+.pp-actions { display:flex; gap:8px; align-items:flex-end; padding-bottom:4px; flex-wrap:wrap; }
+.pp-follow-btn { padding:9px 20px; border-radius:10px; border:none; background:var(--blue); color:#fff; font-family:var(--ffd); font-size:13px; font-weight:700; cursor:pointer; transition:all .18s; letter-spacing:.3px; box-shadow:0 4px 18px rgba(29,110,245,.35); }
+.pp-follow-btn:hover { background:var(--blue2); transform:translateY(-1px); }
+.pp-follow-btn.following { background:var(--bg3); border:1.5px solid var(--bd); color:var(--w3); box-shadow:none; }
+.pp-follow-btn.following:hover { border-color:rgba(239,68,68,.3); color:#f87171; background:rgba(239,68,68,.08); }
+.pp-msg-btn { padding:9px 14px; border-radius:10px; background:var(--bg3); border:1.5px solid var(--bd); color:var(--w2); font-size:13px; font-weight:700; cursor:pointer; transition:all .15s; }
+.pp-msg-btn:hover { border-color:var(--bdb); color:var(--blue3); }
+.pp-call-btn { padding:9px 12px; border-radius:10px; background:var(--bg3); border:1.5px solid var(--bd); color:var(--w2); font-size:16px; cursor:pointer; transition:all .15s; }
+.pp-call-btn:hover { border-color:var(--bdb); }
+.pp-name { font-family:var(--ffd); font-size:19px; font-weight:700; letter-spacing:-.3px; }
+.pp-handle { font-size:12px; color:var(--w3); margin-top:2px; }
+.pp-bio { font-size:13px; color:var(--w2); line-height:1.7; margin-top:10px; }
+.pp-stats { display:flex; gap:22px; padding:14px 0; border-top:1px solid var(--bd); margin-top:12px; flex-wrap:wrap; }
+.pp-stat { text-align:center; cursor:pointer; }
+.pp-stat-n { font-family:var(--ffd); font-size:18px; font-weight:700; }
+.pp-stat-l { font-size:10px; color:var(--w3); letter-spacing:1px; text-transform:uppercase; margin-top:1px; }
+.pp-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; margin-top:2px; }
+.pp-grid-item { aspect-ratio:1; background:var(--bg3); border-radius:3px; display:flex; align-items:center; justify-content:center; font-size:22px; position:relative; overflow:hidden; border:1px solid var(--bd); cursor:pointer; }
+.pp-grid-item img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.pp-empty-grid { grid-column:1/-1; text-align:center; padding:28px; color:var(--w3); font-size:13px; }
+
 </style>
 </head>
 <body>
@@ -952,12 +1020,25 @@ input, textarea, select, button { font-family: var(--ff); -webkit-appearance: no
           </div>
         </div>
 
-        <!-- EXPLORE -->
+        <!-- EXPLORE / SEARCH -->
         <div class="panel" id="panel-explore">
           <div class="explore-wrap">
-            <div class="search-bar"><span class="search-ico">🔍</span><input type="text" placeholder="Search people, posts, vibes..." oninput="handleSearch(this.value)"></div>
-            <div class="explore-categories" id="exploreCats"></div>
-            <div class="explore-mosaic" id="exploreMosaic"></div>
+            <div class="search-bar">
+              <span class="search-ico">🔍</span>
+              <input type="text" id="searchInput" placeholder="Search people, posts, tags..." oninput="handleSearch(this.value)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+            </div>
+            <div class="search-tabs">
+              <button class="s-tab on" id="st-people" onclick="switchSearchTab('people',this)">👥 People</button>
+              <button class="s-tab" id="st-posts" onclick="switchSearchTab('posts',this)">📝 Posts</button>
+              <button class="s-tab" id="st-tags" onclick="switchSearchTab('tags',this)">🏷 Tags</button>
+            </div>
+            <div id="searchResults"></div>
+            <div id="discoverSection">
+              <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--w3);margin-bottom:13px;display:flex;align-items:center;gap:7px"><span style="width:12px;height:2px;background:var(--blue);border-radius:1px;display:inline-block"></span>DISCOVER PEOPLE</div>
+              <div class="user-results" id="discoverUsers"></div>
+              <div style="margin-top:20px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--w3);margin-bottom:13px;display:flex;align-items:center;gap:7px"><span style="width:12px;height:2px;background:var(--blue);border-radius:1px;display:inline-block"></span>TRENDING TAGS</div>
+              <div id="trendingTags"></div>
+            </div>
           </div>
         </div>
 
@@ -1383,6 +1464,8 @@ function showSuccess(sess) {
   document.getElementById('succTitle').textContent = 'Hey ' + sess.name.split(' ')[0] + '! 🎉';
   document.getElementById('succSub').textContent = 'Your Preethie account is ready. Let\'s vibe.';
   document.getElementById('succScreen').classList.add('on');
+  // Register user so others can find them
+  registerUser(sess);
 }
 
 function enterApp() { activateScreen('app'); initApp(); }
@@ -1734,43 +1817,255 @@ function cycleAlbumPrivacy() {
 // ══════════════════════════════════════════
 //  EXPLORE
 // ══════════════════════════════════════════
-const CATS = ['✨ All', '🎵 Music', '📸 Photos', '🎬 Reels', '🌍 Travel', '💫 Style', '🎯 Sports', '🍕 Food'];
-const EXPLORE_ITEMS = [
-  { emoji: '🌅', cat: 'Photos', title: 'Sunset Moments', grad: 'linear-gradient(135deg,#1a1a3e,#2d1b69)' },
-  { emoji: '🎵', cat: 'Music', title: 'Afrobeats Rising', grad: 'linear-gradient(135deg,#0d1b4f,#1e3a5f)' },
-  { emoji: '🌍', cat: 'Travel', title: 'Hidden Gems', grad: 'linear-gradient(135deg,#0f2027,#203a43)', tall: true },
-  { emoji: '💃', cat: 'Reels', title: 'Dance Reels', grad: 'linear-gradient(135deg,#1a0a2e,#3d1a6e)' },
-  { emoji: '📸', cat: 'Photos', title: 'Street Life', grad: 'linear-gradient(135deg,#060b1e,#0c1840)' },
-  { emoji: '🍕', cat: 'Food', title: 'Food Diaries', grad: 'linear-gradient(135deg,#1a0a00,#3d1a00)', tall: true },
-  { emoji: '💫', cat: 'Style', title: 'OOTD Vibes', grad: 'linear-gradient(135deg,#0d1030,#1a1a4e)' },
-  { emoji: '🎯', cat: 'Sports', title: 'Game Day', grad: 'linear-gradient(135deg,#00101e,#0a2040)' },
+// ══════════════════════════════════════════
+//  USER REGISTRY — seeded profiles (no real accounts)
+// ══════════════════════════════════════════
+const USER_SEED = [
+  { username:'amara.creates', name:'Amara Osei', bio:'Photographer & visual storyteller 📸 Lagos, NG', emoji:'🌸', posts:42, followers:1284, following:310, tags:['#photography','#lagos'] },
+  { username:'kofi.beats', name:'Kofi Mensah', bio:'Music producer 🎵 Afrobeats & Amapiano. New EP dropping soon', emoji:'🎵', posts:18, followers:3200, following:180, tags:['#music','#afrobeats'] },
+  { username:'nadia.lens', name:'Nadia Yeboah', bio:'Street photographer 📷 Capturing real moments, real people', emoji:'📷', posts:97, followers:820, following:450, tags:['#streetphotography','#documentary'] },
+  { username:'remi.world', name:'Remi Adeyemi', bio:'Travel & culture 🌍 50+ countries. Life is short, explore.', emoji:'🌍', posts:210, followers:9400, following:530, tags:['#travel','#culture'] },
+  { username:'aisha.styles', name:'Aisha Diallo', bio:'Fashion & lifestyle ✨ Style is a form of self-expression', emoji:'💄', posts:65, followers:4700, following:290, tags:['#fashion','#ootd'] },
+  { username:'jay.fitness', name:'Jay Obi', bio:'Personal trainer 💪 Transform your body, transform your life', emoji:'💪', posts:134, followers:2100, following:410, tags:['#fitness','#health'] },
+  { username:'priya.art', name:'Priya Nair', bio:'Digital artist & illustrator 🎨 Art is my language', emoji:'🎨', posts:88, followers:6300, following:220, tags:['#art','#digitalart'] },
+  { username:'tunde.chef', name:'Tunde Bakare', bio:'Chef & food blogger 🍕 West African cuisine meets the world', emoji:'🍽', posts:156, followers:3800, following:340, tags:['#food','#chef'] },
+  { username:'yemi.dance', name:'Yemi Adeola', bio:'Dancer & choreographer 💃 Afrobeats is a lifestyle', emoji:'💃', posts:73, followers:12000, following:600, tags:['#dance','#afrobeats'] },
+  { username:'chidi.tech', name:'Chidi Eze', bio:'Software engineer & founder 💻 Building the future from Africa', emoji:'💻', posts:29, followers:1560, following:380, tags:['#tech','#startup'] },
 ];
 
+// ── follows stored in localStorage ──
+function getFollows() { return JSON.parse(localStorage.getItem('preethie_follows')||'[]'); }
+function saveFollows(v) { localStorage.setItem('preethie_follows', JSON.stringify(v)); }
+function isFollowing(username) { return getFollows().includes(username); }
+function toggleFollow(username) {
+  const f = getFollows();
+  const i = f.indexOf(username);
+  if (i === -1) f.push(username); else f.splice(i,1);
+  saveFollows(f);
+  return i === -1; // returns true if now following
+}
+
+// ── registered users (from signups) ──
+function getRegisteredUsers() { return JSON.parse(localStorage.getItem('preethie_users')||'[]'); }
+function registerUser(sess) {
+  const users = getRegisteredUsers();
+  if (!users.find(u => u.username === sess.username)) {
+    users.push({ username:sess.username, name:sess.name, bio:'✨ Living my Preethie life', avatar:sess.avatar, emoji:sess.emoji||'✨', posts:0, followers:0, following:0, tags:[], createdAt:sess.createdAt });
+    localStorage.setItem('preethie_users', JSON.stringify(users));
+  }
+}
+
+// all searchable users = seed + registered
+function getAllUsers() {
+  const registered = getRegisteredUsers();
+  const me = DB.sess()?.username;
+  return [...USER_SEED, ...registered.filter(u => u.username !== me)];
+}
+
+// ══════════════════════════════════════════
+//  SEARCH
+// ══════════════════════════════════════════
+let currentSearchTab = 'people';
+
 function renderExplore() {
-  document.getElementById('exploreCats').innerHTML = CATS.map((c, i) => `<button class="cat-chip ${i===0?'on':''}" onclick="filterExplore(this,'${c}')">${c}</button>`).join('');
-  renderExploreMosaic(EXPLORE_ITEMS);
+  document.getElementById('searchResults').style.display = 'none';
+  document.getElementById('discoverSection').style.display = '';
+  const si = document.getElementById('searchInput');
+  if (si) si.value = '';
+  renderDiscover();
+  renderTrendingTags();
 }
 
-function renderExploreMosaic(items) {
-  document.getElementById('exploreMosaic').innerHTML = items.map((item, i) => `
-    <div class="mosaic-item ${item.tall ? 'tall' : ''}" style="animation-delay:${i*0.05}s">
-      <div class="mosaic-visual" style="background:${item.grad}"><span style="font-size:${item.tall?'56px':'42px'}">${item.emoji}</span></div>
-      <div class="mosaic-label"><div class="mosaic-cat">${item.cat}</div><div class="mosaic-title">${item.title}</div></div>
-    </div>`).join('');
+function renderDiscover() {
+  const users = getAllUsers().slice(0, 6);
+  document.getElementById('discoverUsers').innerHTML = users.map(u => userRowHTML(u)).join('');
 }
 
-function filterExplore(el, cat) {
-  document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('on'));
+function renderTrendingTags() {
+  const tags = ['#PreethieVibes','#GoldenHour','#AfroCreatives','#StreetPhotography','#NewMusic','#LagosLife','#AfroBeats','#FoodiesOfPreethie'];
+  document.getElementById('trendingTags').innerHTML = '<div style="display:flex;flex-wrap:wrap;gap:8px">' +
+    tags.map(t => `<div onclick="searchByTag('${t}')" style="padding:7px 14px;border-radius:20px;border:1.5px solid var(--bd);background:var(--bg3);color:var(--blue3);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='var(--bdb)'" onmouseout="this.style.borderColor='var(--bd)'">${t}</div>`).join('') + '</div>';
+}
+
+function searchByTag(tag) {
+  const si = document.getElementById('searchInput');
+  if (si) si.value = tag;
+  currentSearchTab = 'tags';
+  document.querySelectorAll('.s-tab').forEach(b => b.classList.remove('on'));
+  document.getElementById('st-tags')?.classList.add('on');
+  handleSearch(tag);
+}
+
+function switchSearchTab(tab, el) {
+  currentSearchTab = tab;
+  document.querySelectorAll('.s-tab').forEach(b => b.classList.remove('on'));
   el.classList.add('on');
-  const filtered = cat === '✨ All' ? EXPLORE_ITEMS : EXPLORE_ITEMS.filter(i => '✦ ' + i.cat === cat || cat.includes(i.cat));
-  renderExploreMosaic(filtered.length ? filtered : EXPLORE_ITEMS);
+  const q = document.getElementById('searchInput')?.value || '';
+  if (q) handleSearch(q); else renderExplore();
 }
 
 function handleSearch(q) {
-  if (!q) { renderExploreMosaic(EXPLORE_ITEMS); return; }
-  const filtered = EXPLORE_ITEMS.filter(i => i.title.toLowerCase().includes(q.toLowerCase()) || i.cat.toLowerCase().includes(q.toLowerCase()));
-  renderExploreMosaic(filtered.length ? filtered : EXPLORE_ITEMS);
+  const sr = document.getElementById('searchResults');
+  const ds = document.getElementById('discoverSection');
+  if (!q.trim()) {
+    sr.style.display = 'none';
+    ds.style.display = '';
+    renderDiscover();
+    return;
+  }
+  sr.style.display = '';
+  ds.style.display = 'none';
+  const ql = q.toLowerCase();
+
+  if (currentSearchTab === 'people') {
+    const users = getAllUsers().filter(u =>
+      u.name.toLowerCase().includes(ql) ||
+      u.username.toLowerCase().includes(ql) ||
+      (u.bio||'').toLowerCase().includes(ql)
+    );
+    if (!users.length) {
+      sr.innerHTML = `<div class="search-empty"><div class="search-empty-ico">🔍</div><div class="search-empty-title">No people found</div><div class="search-empty-sub">Try searching by name or @username</div></div>`;
+    } else {
+      sr.innerHTML = `<div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--w3);margin-bottom:13px;display:flex;align-items:center;gap:7px"><span style="width:12px;height:2px;background:var(--blue);border-radius:1px;display:inline-block"></span>${users.length} RESULT${users.length!==1?'S':''}</div><div class="user-results">${users.map(u => userRowHTML(u)).join('')}</div>`;
+    }
+  } else if (currentSearchTab === 'posts') {
+    const posts = DB.posts().filter(p => (p.text||'').toLowerCase().includes(ql));
+    if (!posts.length) {
+      sr.innerHTML = `<div class="search-empty"><div class="search-empty-ico">📝</div><div class="search-empty-title">No posts found</div><div class="search-empty-sub">Try different keywords</div></div>`;
+    } else {
+      sr.innerHTML = `<div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--w3);margin-bottom:13px;display:flex;align-items:center;gap:7px"><span style="width:12px;height:2px;background:var(--blue);border-radius:1px;display:inline-block"></span>${posts.length} POST${posts.length!==1?'S':''}</div>` +
+        posts.map(p => `<div style="background:var(--bg2);border:1px solid var(--bd);border-radius:14px;padding:13px;margin-bottom:10px;cursor:pointer" onclick="showPanel('feed')">
+          <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px">
+            <div style="width:34px;height:34px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;overflow:hidden">${p.avatar?`<img src="${p.avatar}" style="width:100%;height:100%;object-fit:cover">`:(p.emoji||'✨')}</div>
+            <div><div style="font-size:13px;font-weight:700">${p.name||p.uid}</div><div style="font-size:11px;color:var(--w3)">@${p.uid} · ${ago(p.time)}</div></div>
+          </div>
+          <div style="font-size:13px;color:var(--w2);line-height:1.6">${highlightMatch(p.text, q)}</div>
+        </div>`).join('');
+    }
+  } else {
+    // tags
+    const matching = getAllUsers().filter(u => (u.tags||[]).some(t => t.toLowerCase().includes(ql)));
+    const posts = DB.posts().filter(p => (p.text||'').includes(q));
+    if (!matching.length && !posts.length) {
+      sr.innerHTML = `<div class="search-empty"><div class="search-empty-ico">🏷</div><div class="search-empty-title">No results for "${q}"</div><div class="search-empty-sub">Try a different tag</div></div>`;
+    } else {
+      sr.innerHTML = (matching.length ? `<div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--w3);margin-bottom:10px">PEOPLE</div><div class="user-results">${matching.map(u => userRowHTML(u)).join('')}</div>` : '') +
+        (posts.length ? `<div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--w3);margin:14px 0 10px">${posts.length} POST${posts.length!==1?'S':''}</div>` + posts.map(p => `<div style="background:var(--bg2);border:1px solid var(--bd);border-radius:14px;padding:12px;margin-bottom:8px;font-size:13px;color:var(--w2)">${highlightMatch(p.text,q)}</div>`).join('') : '');
+    }
+  }
 }
+
+function highlightMatch(text, q) {
+  if (!q || !text) return text || '';
+  const re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
+  return text.replace(re, '<span style="background:rgba(29,110,245,0.25);color:var(--blue3);border-radius:3px;padding:0 2px">$1</span>');
+}
+
+function userRowHTML(u) {
+  const following = isFollowing(u.username);
+  const fmt = n => n >= 1000 ? (n/1000).toFixed(1)+'K' : n;
+  const av = u.avatar ? `<img src="${u.avatar}">` : u.emoji;
+  return `<div class="user-row" onclick="openPubProfile('${u.username}')">
+    <div class="user-row-av ${following?'has-ring':''}">${av}</div>
+    <div class="user-row-info">
+      <div class="user-row-name">${u.name}</div>
+      <div class="user-row-handle">@${u.username}</div>
+      ${u.bio ? `<div class="user-row-bio">${u.bio}</div>` : ''}
+      <div class="user-row-meta">
+        <span class="user-row-stat"><strong>${fmt(u.followers||0)}</strong> followers</span>
+        <span class="user-row-stat"><strong>${u.posts||0}</strong> posts</span>
+      </div>
+    </div>
+    <button class="follow-btn ${following?'following':''}" onclick="event.stopPropagation();quickFollow('${u.username}',this)">${following?'Following':'Follow'}</button>
+  </div>`;
+}
+
+function quickFollow(username, btn) {
+  const now = toggleFollow(username);
+  btn.textContent = now ? 'Following' : 'Follow';
+  btn.classList.toggle('following', now);
+  btn.closest('.user-row').querySelector('.user-row-av').classList.toggle('has-ring', now);
+  showToast(now ? '✓ Following @'+username : 'Unfollowed @'+username);
+}
+
+// ══════════════════════════════════════════
+//  PUBLIC PROFILE
+// ══════════════════════════════════════════
+let currentPubUser = null;
+
+function openPubProfile(username) {
+  const u = getAllUsers().find(u => u.username === username);
+  if (!u) return;
+  currentPubUser = u;
+
+  document.getElementById('ppBackTitle').textContent = '@' + u.username;
+  const av = document.getElementById('ppAvInner');
+  av.innerHTML = u.avatar ? `<img src="${u.avatar}" alt="">` : u.emoji;
+  document.getElementById('ppName').textContent = u.name;
+  document.getElementById('ppHandle').textContent = '@' + u.username;
+  document.getElementById('ppBio').textContent = u.bio || '✨ Preethie member';
+
+  // Counts
+  const userPosts = DB.posts().filter(p => p.uid === u.username);
+  document.getElementById('ppPosts').textContent = u.posts || userPosts.length;
+  document.getElementById('ppFollowers').textContent = fmtNum(u.followers || 0);
+  document.getElementById('ppFollowing').textContent = fmtNum(u.following || 0);
+
+  // Follow button state
+  const following = isFollowing(u.username);
+  const fb = document.getElementById('ppFollowBtn');
+  fb.textContent = following ? 'Following' : 'Follow';
+  fb.classList.toggle('following', following);
+
+  // Photo grid — their photos if real user, else placeholder
+  const photos = DB.photos().filter(p => p.uid === u.username);
+  if (photos.length) {
+    document.getElementById('ppGrid').innerHTML = photos.slice(0,9).map(p =>
+      `<div class="pp-grid-item"><img src="${p.url}" alt=""></div>`).join('');
+  } else {
+    // Show placeholder grid for seed users
+    const emojis = ['🌅','🎵','📸','🌍','✨','💃','🎨','🍕','💪'];
+    document.getElementById('ppGrid').innerHTML = Array(9).fill(0).map((_,i) =>
+      `<div class="pp-grid-item" style="background:${['#060b1e','#0c1430','#080e22'][i%3]}">${emojis[i%emojis.length]}</div>`).join('');
+  }
+
+  document.getElementById('pubProfile').classList.add('on');
+  document.body.style.overflow = 'hidden';
+}
+
+function closePubProfile() {
+  document.getElementById('pubProfile').classList.remove('on');
+  document.body.style.overflow = '';
+  currentPubUser = null;
+}
+
+function toggleFollowUser() {
+  if (!currentPubUser) return;
+  const now = toggleFollow(currentPubUser.username);
+  const fb = document.getElementById('ppFollowBtn');
+  fb.textContent = now ? 'Following' : 'Follow';
+  fb.classList.toggle('following', now);
+  // Update follower count display
+  const cur = parseInt(document.getElementById('ppFollowers').textContent.replace('K','000').replace('.','')) || 0;
+  document.getElementById('ppFollowers').textContent = fmtNum(now ? (currentPubUser.followers||0)+1 : Math.max(0,(currentPubUser.followers||0)-1));
+  showToast(now ? '✓ Following @'+currentPubUser.username : 'Unfollowed @'+currentPubUser.username);
+}
+
+function msgPubUser() {
+  if (!currentPubUser) return;
+  closePubProfile();
+  showPanel('messages');
+  setTimeout(() => openChat('pub_'+currentPubUser.username, currentPubUser.name, currentPubUser.emoji), 100);
+}
+
+function callPubUser(type) {
+  if (!currentPubUser) return;
+  if (type === 'video') startVideoCall(currentPubUser.name, currentPubUser.emoji);
+  else startVoiceCall(currentPubUser.name, currentPubUser.emoji);
+}
+
+function fmtNum(n) { return n >= 1000 ? (n/1000).toFixed(1)+'K' : String(n); }
+
 
 // ══════════════════════════════════════════
 //  PROFILE
@@ -2129,6 +2424,36 @@ function maybeSimulateCall() {
 }
 
 </script>
+
+
+<!-- ══════════ PUBLIC PROFILE VIEW ══════════ -->
+<div class="pub-profile" id="pubProfile">
+  <div class="pp-back">
+    <button class="pp-back-btn" onclick="closePubProfile()">←</button>
+    <div class="pp-back-title" id="ppBackTitle">Profile</div>
+  </div>
+  <div class="pp-cover"><div class="pp-cover-bg"></div><div class="pp-cover-grid"></div></div>
+  <div class="pp-body">
+    <div class="pp-top">
+      <div class="pp-av-wrap"><div class="pp-av-ring"></div><div class="pp-av-inner" id="ppAvInner">👤</div></div>
+      <div class="pp-actions">
+        <button class="pp-follow-btn" id="ppFollowBtn" onclick="toggleFollowUser()">Follow</button>
+        <button class="pp-msg-btn" onclick="msgPubUser()">💬 Message</button>
+        <button class="pp-call-btn" onclick="callPubUser('voice')" title="Voice call">📞</button>
+        <button class="pp-call-btn" onclick="callPubUser('video')" title="Video call">📹</button>
+      </div>
+    </div>
+    <div class="pp-name" id="ppName">Name</div>
+    <div class="pp-handle" id="ppHandle">@handle</div>
+    <div class="pp-bio" id="ppBio">Bio</div>
+    <div class="pp-stats">
+      <div class="pp-stat"><div class="pp-stat-n" id="ppPosts">0</div><div class="pp-stat-l">Posts</div></div>
+      <div class="pp-stat"><div class="pp-stat-n" id="ppFollowers">0</div><div class="pp-stat-l">Followers</div></div>
+      <div class="pp-stat"><div class="pp-stat-n" id="ppFollowing">0</div><div class="pp-stat-l">Following</div></div>
+    </div>
+    <div class="pp-grid" id="ppGrid"></div>
+  </div>
+</div>
 
 <!-- ══════════ VOICE CALL SCREEN ══════════ -->
 <div class="call-overlay" id="voiceCallScreen">
